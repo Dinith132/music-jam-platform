@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Jam Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="welcome-screen">
+            <div class="welcome-card">
+                <h1>Music Jam Platform</h1>
+                <p>Connect with musicians around the world in real-time</p>
+                
+                <div class="form-group">
+                    <label for="username">Your Name:</label>
+                    <input type="text" id="username" placeholder="Enter your name" required>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="create-room-btn" class="primary-btn">Create New Jam Session</button>
+                    <div class="divider">or</div>
+                    <div class="form-group">
+                        <label for="room-id">Join Existing Session:</label>
+                        <div class="join-room-container">
+                            <input type="text" id="room-id" placeholder="Enter room ID">
+                            <button id="join-room-btn" class="secondary-btn">Join</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Application Screen -->
+        <div id="app-screen" class="app-screen hidden">
+            <div class="top-bar">
+                <div class="room-info">
+                    <h2>Jam Session: <span id="room-id-display"></span></h2>
+                    <button id="copy-room-id" class="icon-btn" title="Copy Room ID">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+                <div class="room-controls">
+                    <button id="leave-btn" class="danger-btn">Leave Session</button>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div class="video-container" id="video-container">
+                    <!-- Videos will be dynamically added here -->
+                    <div id="local-stream-container" class="video-item">
+                        <video id="local-video" autoplay muted playsinline></video>
+                        <div class="video-info">
+                            <span class="video-name">You</span>
+                            <div class="video-status">
+                                <i class="fas fa-microphone" id="local-audio-indicator"></i>
+                                <i class="fas fa-video" id="local-video-indicator"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-panel" id="chat-panel">
+                    <div class="chat-header">
+                        <h3>Chat</h3>
+                        <button id="toggle-chat-btn" class="icon-btn" title="Toggle Chat">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will be dynamically added here -->
+                        <div class="system-message">
+                            <p>Welcome to the jam session! You can chat with participants here.</p>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chat-input" placeholder="Type a message...">
+                        <button id="send-message-btn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-bar">
+                <button id="toggle-audio-btn" class="control-btn">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button id="toggle-video-btn" class="control-btn">
+                    <i class="fas fa-video"></i>
+                </button>
+                <button id="share-screen-btn" class="control-btn">
+                    <i class="fas fa-desktop"></i>
+                </button>
+                <button id="toggle-chat-panel-btn" class="control-btn">
+                    <i class="fas fa-comments"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
