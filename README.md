@@ -35,4 +35,4 @@ Ensure you have the following installed:
 git clone https://github.com/Dinith132/music-jam-platform.git
 cd webrtc-music-jam-platform
 npm install
-npm server.js
+node server.js
