@@ -1,109 +1,38 @@
-# WebRTC Video Conference Application
+# 🎵 WebRTC Music Jam Platform
 
-A real-time video conferencing application built with WebRTC, Socket.IO, and Express.js. This application allows users to create or join video chat rooms, share their screens, and communicate via text chat. It's a fully responsive and scalable solution designed to provide an excellent video conferencing experience.
+A real-time collaborative music jamming platform built using **WebRTC**, **Socket.IO**, and **Express.js**. This application enables musicians to join virtual rooms, share live audio/video, chat, and jam together with low-latency peer-to-peer connections. Whether you're rehearsing with a band or just vibing with fellow artists, this platform brings the studio to your browser.
 
-## Features
+## 🚀 Features
 
-- **Multi-user video conferencing**: Connect with multiple participants in a video chat room.
-- **Real-time text chat**: Communicate with others via text during the call.
-- **Screen sharing**: Share your screen with others in the room.
-- **Microphone mute/unmute**: Toggle your microphone on/off.
-- **Camera on/off toggle**: Control your video feed with ease.
-- **Connection status indicators**: Get real-time feedback on the status of your connection and peers.
-- **Responsive design**: Seamless experience across desktop and mobile devices.
-- **Room-based communication**: Create or join specific rooms for better organized and isolated conversations.
-  
-## Live Demo
+- 🎧 **Live Audio/Video Jam Sessions** – Real-time P2P streaming for low-latency music collaboration.
+- 💬 **Text Chat** – Instant messaging with participants in your jam session.
+- 📡 **Screen Sharing** – Share DAWs, lyrics, or tabs while jamming.
+- 🎙️ **Mic Control** – Toggle your mic to speak or sing on cue.
+- 📷 **Camera Control** – Choose when to show or hide your video feed.
+- 🟢 **Connection Status Indicators** – Know who's connected and live.
+- 📱 **Responsive UI** – Seamless experience across desktop, tablet, and mobile.
 
-You can try out the application here:  
-[WebRTC Video Conference Application](https://real-time-video-conferencing-application.onrender.com)
+## 🎤 Use Cases
 
-## Prerequisites
+- Virtual band practice
+- Remote songwriting sessions
+- Real-time collaborative composing
+- Music tutoring and feedback
+- Community open jam sessions
 
-Ensure that you have the following installed on your machine:
 
-- **Node.js** (v14.0.0 or higher)
-- **NPM** (v6.0.0 or higher)
+## 🛠️ Prerequisites
 
-## Installation
+Ensure you have the following installed:
 
-### 1. Clone the repository:
+- **Node.js** (v14+)
+- **NPM** (v6+)
+- Modern browser (Chrome, Firefox, Edge – must support WebRTC)
 
-```bash
-git clone <your-repo-url>
-cd webrtc-video-conference
-```
-
-### 2. Install dependencies:
+## 🧰 Installation
 
 ```bash
+git clone 
+cd webrtc-music-jam-platform
 npm install
-```
-
-### 3. Start the server:
-
-```bash
-npm start
-```
-
-For development with auto-reload:
-
-```bash
-npm run dev
-```
-
-### 4. Open your browser and navigate to `http://localhost:3000`
-
-## Usage
-
-1. **Join a Room**:
-   - Enter a room ID in the input field.
-   - Click the "Join Room" button to enter the video conference room.
-   
-2. **Grant Permissions**:
-   - Allow camera and microphone access when prompted by your browser.
-   
-3. **Control Your Video**:
-   - Use the control buttons to:
-     - Toggle your microphone on/off.
-     - Toggle your camera on/off.
-     - Share your screen.
-     - Send and receive chat messages.
-
-4. **Leave the Room**:
-   - Use the "Leave" button to exit the conference room.
-
-## Technologies Used
-
-- **WebRTC**: For peer-to-peer video communication.
-- **Socket.IO**: For real-time, bidirectional communication between the server and clients.
-- **Express.js**: A minimal web framework for building the backend.
-- **HTML5**: For creating the structure of the app.
-- **CSS3**: For styling the app and ensuring a responsive design.
-- **JavaScript (ES6+)**: For app logic and real-time updates.
-
-### Note:
-Make sure your browser supports WebRTC for optimal performance.
-
-## Deployment
-
-This application is hosted on Render. You can access the live demo at:
-
-[https://real-time-video-conferencing-application.onrender.com](https://real-time-video-conferencing-application.onrender.com)
-
-## How It Works
-
-1. **WebRTC for Peer-to-Peer Video**: WebRTC (Web Real-Time Communication) allows direct peer-to-peer communication for video and audio without the need for an intermediary server.
-   
-2. **Socket.IO for Real-Time Communication**: Socket.IO handles signaling between clients, ensuring they can join rooms, exchange messages, and update their states (like toggling video/audio) in real time.
-
-3. **Express.js Backend**: The server is responsible for serving static files and managing WebSocket connections. Express.js enables routing and backend support.
-
-## Troubleshooting
-
-- **No video/audio?** Ensure that you've granted the necessary permissions to use the microphone and camera in your browser.
-- **Room issues?** Make sure you're using a unique room ID. If a room already exists with that ID, you will be placed in it.
-
-## License
-
-This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
+npm server.js
