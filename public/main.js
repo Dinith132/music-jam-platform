@@ -6,8 +6,8 @@ const socket = io({
   reconnectionDelay: 1000,
 });
 let localStream;
-let screenStream = null; // For screen sharing
-let peerConnections = {}; // Store multiple peer connections
+let screenStream = null; 
+let peerConnections = {}; 
 let roomId;
 let username;
 let peerUsernames = {};
@@ -75,16 +75,13 @@ async function joinRoom() {
       }
     });
 
-    // Get local media stream
     localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true,
     });
 
-    // Display local video
     localVideo.srcObject = localStream;
 
-    // Create container for local video if not exists
     let localVideoContainer = document.getElementById("local-video-container");
     if (!localVideoContainer) {
       localVideoContainer = document.createElement("div");
@@ -93,22 +90,19 @@ async function joinRoom() {
       localVideo.parentNode.insertBefore(localVideoContainer, localVideo);
       localVideoContainer.appendChild(localVideo);
 
-      // Add username label for local video
       const localUsernameLabel = document.createElement("div");
       localUsernameLabel.className = "username-label";
       localUsernameLabel.textContent = username + " (You)";
       localVideoContainer.appendChild(localUsernameLabel);
     }
 
-    // Add click handler to local video container
     if (localVideoContainer) {
       localVideoContainer.onclick = handleVideoClick;
     }
 
-    // Join the room
+
     socket.emit("join-room", roomId, username);
 
-    // Show UI elements
     document.getElementById("controls").style.display = "flex";
     document.getElementById("chat").style.display = "flex";
     joinButton.disabled = true;
@@ -121,17 +115,14 @@ async function joinRoom() {
   }
 }
 
-// Create a peer connection for a new user
 function createPeerConnection(userId) {
   if (peerConnections[userId]) {
     console.log(`Peer connection already exists for ${userId}`);
     return peerConnections[userId];
   }
 
-  // Create new RTCPeerConnection
   const peerConnection = new RTCPeerConnection(iceServers);
 
-  // Add connection state monitoring
   peerConnection.onconnectionstatechange = () => {
     console.log(
       `Connection state with ${userId}:`,
@@ -139,7 +130,6 @@ function createPeerConnection(userId) {
     );
   };
 
-  // Add ICE connection state monitoring
   peerConnection.oniceconnectionstatechange = () => {
     console.log(
       `ICE connection state with ${userId}:`,
@@ -147,12 +137,10 @@ function createPeerConnection(userId) {
     );
   };
 
-  // Add local tracks to the connection
   localStream.getTracks().forEach((track) => {
     peerConnection.addTrack(track, localStream);
   });
 
-  // Handle ICE candidates
   peerConnection.onicecandidate = (event) => {
     if (event.candidate) {
       console.log(`Sending ICE candidate to ${userId}`);
@@ -160,11 +148,9 @@ function createPeerConnection(userId) {
     }
   };
 
-  // Handle incoming tracks (remote video/audio)
   peerConnection.ontrack = (event) => {
     console.log(`Received track from ${userId}`);
 
-    // Remove existing video container if it exists
     const existingContainer = document.getElementById(`container-${userId}`);
     if (existingContainer) {
       existingContainer.remove();
@@ -173,12 +159,10 @@ function createPeerConnection(userId) {
     createVideoContainer(userId, event.streams[0]);
   };
 
-  // Store the connection
   peerConnections[userId] = peerConnection;
   return peerConnection;
 }
 
-// Toggle microphone
 function toggleMic() {
   const audioTrack = localStream.getAudioTracks()[0];
   audioTrack.enabled = !audioTrack.enabled;
@@ -190,7 +174,6 @@ function toggleMic() {
   }
 }
 
-// Toggle camera
 function toggleCamera() {
   const videoTrack = localStream.getVideoTracks()[0];
   videoTrack.enabled = !videoTrack.enabled;
