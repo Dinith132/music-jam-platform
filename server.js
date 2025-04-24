@@ -14,34 +14,28 @@ const io = new Server(server, {
   pingInterval: 25000,
 });
 
-app.use(express.static("public")); // Serve frontend files from 'public' folder
-
-// Store active rooms and their participants
+app.use(express.static("public")); 
 const rooms = {};
 
 io.on("connection", (socket) => {
   console.log("A user connected:", socket.id);
 
-  // When a user joins a room
+
   socket.on("join-room", (roomId, username) => {
     console.log(`User ${socket.id} attempting to join room ${roomId}`);
 
-    // Create the room if it doesn't exist
     if (!rooms[roomId]) {
       rooms[roomId] = [];
     }
 
-    // Add user to the room
     socket.join(roomId);
     rooms[roomId].push({
       id: socket.id,
       username: username || "Guest",
     });
 
-    // Notify others in the room
     socket.to(roomId).emit("user-connected", socket.id, username);
 
-    // Send the list of existing users to the new participant
     socket.emit(
       "room-users",
       rooms[roomId].filter((user) => user.id !== socket.id)
@@ -49,7 +43,6 @@ io.on("connection", (socket) => {
 
     console.log(`User ${socket.id} joined room ${roomId}`);
 
-    // Handle chat messages
     socket.on("send-message", (message) => {
       io.to(roomId).emit("receive-message", {
         user: username || "Guest",
@@ -58,7 +51,6 @@ io.on("connection", (socket) => {
       });
     });
 
-    // Handle WebRTC signaling
     socket.on("offer", (offer, targetId) => {
       console.log(`Forwarding offer from ${socket.id} to ${targetId}`);
       socket.to(targetId).emit("offer", offer, socket.id);
@@ -104,7 +96,7 @@ server.on("error", (error) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

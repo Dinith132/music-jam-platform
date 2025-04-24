@@ -33,6 +33,7 @@ const messageInput = document.getElementById("messageInput");
 const sendButton = document.getElementById("sendButton");
 const joinSection = document.getElementById('welcome-screen');
 const videoId= document.getElementById("videoId");
+const roomIdDisplay = document.getElementById("roomIdDisplay");
 
 
 // ICE servers configuration (STUN/TURN)
@@ -54,6 +55,7 @@ async function joinRoom() {
     alert(`No Room ID entered. A new Room ID has been generated: ${roomId}`);
   }
 
+  document.getElementById("roomId").textContent = roomId;
   // Ask for username if not already set
   if (!username) {
     username = prompt("Enter your name:") || "Guest";
