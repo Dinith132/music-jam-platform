@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home - WebRTC App</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h2 id="greeting">Hello!</h2>
+    <input type="text" id="roomInput" placeholder="Enter Room ID" />
+    <button id="joinRoomBtn">Join Room</button>
+  </div>
+
+  <script>
+    const joinBtn = document.getElementById("joinRoomBtn");
+    const roomInput = document.getElementById("roomInput");
+    const greeting = document.getElementById("greeting");
+
+    // Load username from localStorage
+    const username = localStorage.getItem("username");
+    if (!username) {
+      window.location.href = "login.html";
+    } else {
+      greeting.textContent = `Hello, ${username}!`;
+    }
+
+    joinBtn.addEventListener("click", () => {
+      const roomId = roomInput.value.trim();
+      if (!roomId) {
+        alert("Please enter a Room ID");
+        return;
+      }
+
+      // Pass username and roomId via query string
+      const url = `main.html?room=${roomId}`;
+      window.location.href = url;
+    });
+  </script>
+</body>
+</html>

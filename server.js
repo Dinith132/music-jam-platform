@@ -1,109 +1,110 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+  transports: ["websocket", "polling"],
+  pingTimeout: 60000,
+  pingInterval: 25000,
+});
 
-// Serve static files from public directory
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static("public")); // Serve frontend files from 'public' folder
 
-// Store active rooms
+// Store active rooms and their participants
 const rooms = {};
 
-// Route for creating a new room
-app.get('/create-room', (req, res) => {
-  const roomId = uuidv4();
-  rooms[roomId] = { users: [] };
-  res.json({ roomId });
-});
+io.on("connection", (socket) => {
+  console.log("A user connected:", socket.id);
 
-// Route for checking if a room exists
-app.get('/room/:roomId', (req, res) => {
-  const { roomId } = req.params;
-  if (rooms[roomId]) {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  } else {
-    res.status(404).send('Room not found');
-  }
-});
+  // When a user joins a room
+  socket.on("join-room", (roomId, username) => {
+    console.log(`User ${socket.id} attempting to join room ${roomId}`);
 
-// Default route
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Socket.io connection handling
-io.on('connection', (socket) => {
-  console.log('A user connected:', socket.id);
-
-  // Handle room joining
-  socket.on('join-room', (roomId, userId, username) => {
-    console.log(`User ${username} (${userId}) joined room ${roomId}`);
-    
-    // Join the room
-    socket.join(roomId);
+    // Create the room if it doesn't exist
     if (!rooms[roomId]) {
-      rooms[roomId] = { users: [] };
+      rooms[roomId] = [];
     }
-    
+
     // Add user to the room
-    rooms[roomId].users.push({
-      id: userId,
-      username: username,
-      socketId: socket.id
+    socket.join(roomId);
+    rooms[roomId].push({
+      id: socket.id,
+      username: username || "Guest",
     });
-    
-    // Tell other users that a new user has joined
-    socket.to(roomId).emit('user-connected', userId, username);
-    
-    // Send list of existing users to the new user
-    socket.emit('existing-users', rooms[roomId].users.filter(user => user.id !== userId));
-    
+
+    // Notify others in the room
+    socket.to(roomId).emit("user-connected", socket.id, username);
+
+    // Send the list of existing users to the new participant
+    socket.emit(
+      "room-users",
+      rooms[roomId].filter((user) => user.id !== socket.id)
+    );
+
+    console.log(`User ${socket.id} joined room ${roomId}`);
+
+    // Handle chat messages
+    socket.on("send-message", (message) => {
+      io.to(roomId).emit("receive-message", {
+        user: username || "Guest",
+        text: message,
+        senderId: socket.id,
+      });
+    });
+
+    // Handle WebRTC signaling
+    socket.on("offer", (offer, targetId) => {
+      console.log(`Forwarding offer from ${socket.id} to ${targetId}`);
+      socket.to(targetId).emit("offer", offer, socket.id);
+    });
+
+    socket.on("answer", (answer, targetId) => {
+      console.log(`Forwarding answer from ${socket.id} to ${targetId}`);
+      socket.to(targetId).emit("answer", answer, socket.id);
+    });
+
+    socket.on("ice-candidate", (candidate, targetId) => {
+      console.log(`Forwarding ICE candidate from ${socket.id} to ${targetId}`);
+      socket.to(targetId).emit("ice-candidate", candidate, socket.id);
+    });
+
     // Handle disconnection
-    socket.on('disconnect', () => {
-      console.log(`User ${username} disconnected from room ${roomId}`);
-      
-      // Remove user from the room
+    socket.on("disconnect", () => {
+      console.log(`User ${socket.id} left room ${roomId}`);
+
+      // Remove user from room
       if (rooms[roomId]) {
-        rooms[roomId].users = rooms[roomId].users.filter(user => user.socketId !== socket.id);
-        
+        // Find the user's username before removing them
+        const user = rooms[roomId].find((u) => u.id === socket.id);
+        const username = user ? user.username : "Guest";
+
+        rooms[roomId] = rooms[roomId].filter((user) => user.id !== socket.id);
+
         // Delete room if empty
-        if (rooms[roomId].users.length === 0) {
+        if (rooms[roomId].length === 0) {
           delete rooms[roomId];
         } else {
-          // Notify others that user has left
-          socket.to(roomId).emit('user-disconnected', userId, username);
+          // Notify others that user disconnected with their username
+          socket.to(roomId).emit("user-disconnected", socket.id, username);
         }
       }
     });
   });
-
-  // Handle WebRTC signaling
-  socket.on('signal', ({ userId, to, signal }) => {
-    io.to(to).emit('signal', { userId, from: socket.id, signal });
-  });
-
-  // Handle chat messages
-  socket.on('send-message', (roomId, message, username) => {
-    io.to(roomId).emit('receive-message', {
-      content: message,
-      sender: username,
-      timestamp: new Date().toISOString()
-    });
-  });
-
-  // Handle audio/video toggle events for notification purposes
-  socket.on('toggle-media', (roomId, userId, type, enabled) => {
-    socket.to(roomId).emit('user-toggle-media', userId, type, enabled);
-  });
 });
 
-// Start server
+// Error handling for the server
+server.on("error", (error) => {
+  console.error("Server error:", error);
+});
+
+// Start the server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Server running on port http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

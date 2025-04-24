@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WebRTC Video Room</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="videos" class="videos-container">
+    <video id="localVideo" autoplay muted playsinline></video>
+  </div>
+
+  <div id="controls" style="display: none;">
+    <input type="text" id="room" placeholder="Room ID" />
+    <button id="joinButton">Join Room</button>
+    <button id="micButton"><img id="micIcon" src="icons/mic-on.png" /></button>
+    <button id="cameraButton"><img id="cameraIcon" src="icons/camera-on.png" /></button>
+    <button id="screenShareButton"><img id="screenShareIcon" src="icons/screen-share.png" /></button>
+    <button id="recordButton"><img id="recordIcon" src="icons/record.png" /></button>
+    <button onclick="endCall()">End Call</button>
+  </div>
+
+  <div id="chat" style="display: none;">
+    <div id="chatbox"></div>
+    <input type="text" id="messageInput" placeholder="Type message..." />
+    <button id="sendButton" onclick="sendMessage()">Send</button>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
